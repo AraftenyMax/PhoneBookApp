@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".MainActivity">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_contacts"
+            android:icon="@drawable/contacts_icon"
+            android:title="@string/nav_contacts" />
+        <item
+            android:id="@+id/nav_notes"
+            android:icon="@drawable/notes_icon"
+            android:title="@string/nav_notes" />
+        <item
+            android:id="@+id/nav_events"
+            android:icon="@drawable/events_icon"
+            android:title="@string/nav_events" />
+    </group>
+</menu>
