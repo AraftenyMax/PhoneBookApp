@@ -1,46 +1,67 @@
 package com.maxdev.maxphonebook.contacts.add;
 
-import android.content.Context;
-
 import com.maxdev.maxphonebook.App;
-import com.maxdev.maxphonebook.R;
-import com.maxdev.maxphonebook.contacts.Contact;
-import com.maxdev.maxphonebook.contacts.ContactsRepository;
-import com.maxdev.maxphonebook.contacts.list.ContactsListFragment;
+import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconColor;
+import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconRepository;
+import com.maxdev.maxphonebook.db.contacts.Contact;
+import com.maxdev.maxphonebook.db.contacts.ContactsRepository;
 
-import java.util.Observable;
-import java.util.concurrent.Executor;
+import java.util.NoSuchElementException;
+import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import io.reactivex.Scheduler;
+import io.reactivex.Observable;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class ContactsAddPresenter {
-    private FragmentManager fragmentManager;
+    @Inject
+    ContactIconRepository contactIconRepository;
     @Inject
     ContactsRepository contactsRepository;
-    Executor executor;
+    private View view;
 
-    public ContactsAddPresenter(FragmentManager fragmentManager) {
+    public ContactsAddPresenter(View view) {
         App.getPhoneBookComponent().inject(this);
-        this.fragmentManager = fragmentManager;
+        this.view = view;
     }
 
     public void saveContact(Contact contact) {
-        contactsRepository.createContact(contact).subscribeOn(Schedulers.io())
-                .subscribe(this::backToContactsList, Throwable::printStackTrace).dispose();
+        contactsRepository.createContact(contact)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(this.view::onContactSavedSuccessfully, this.view::onContactSaveFailed);
     }
 
-    private void backToContactsList() {
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.fragmentLayout, new ContactsListFragment());
-        transaction.commit();
+    public int selectColor(String startChars) {
+        Single.fromCallable(() -> contactIconRepository.select(startChars))
+                .doOnSuccess(contactIconColorSingle -> {
+                    ContactIconColor color = contactIconColorSingle.blockingGet();
+                    if (color == null)
+                        Observable.error(new NoSuchElementException(""));
+                    view.displayContactIcon(color);
+                }).doOnError(throwable -> {
+            insertColor(startChars);
+
+        });
+    }
+
+    private ContactIconColor insertColor(String startChars) {
+        ContactIconColor color =
     }
 
     public interface View {
-        void onContactSave(Contact contact);
+        void onContactSave();
+
+        void onContactSavedSuccessfully();
+
+        void onContactValidationFailed();
+
+        void onContactSaveFailed(Throwable throwable);
+
+        void displayContactIcon(ContactIconColor color);
     }
 }

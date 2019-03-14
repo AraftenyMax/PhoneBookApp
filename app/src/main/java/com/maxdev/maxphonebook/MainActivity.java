@@ -5,48 +5,42 @@ import android.view.MenuItem;
 
 import com.google.android.material.navigation.NavigationView;
 import com.maxdev.maxphonebook.contacts.list.ContactsListFragment;
-import com.maxdev.maxphonebook.events.EventsListFragment;
-import com.maxdev.maxphonebook.notes.NotesListFragment;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.navigation.ui.NavigationUI;
 
 public class MainActivity extends AppCompatActivity {
+    private MainActivityPresenter presenter;
+    private Toolbar toolbar;
     private DrawerLayout drawerLayout;
-    private int currentItem;
+    private NavController navController;
+    private NavigationView navigationView;
+    private Fragment navHostFragment;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.fragmentLayout, new ContactsListFragment());
-        ft.commit();
+        setUpNavigation();
+        presenter = new MainActivityPresenter();
+    }
 
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                menuItem.setChecked(true);
-                if (currentItem == menuItem.getItemId())
-                    return false;
-                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                switch (menuItem.getItemId()) {
-                    case R.id.nav_contacts:
-                        ft.replace(R.id.fragmentLayout, new ContactsListFragment());
-                        break;
-                    case R.id.nav_events:
-                        ft.replace(R.id.fragmentLayout, new EventsListFragment());
-                        break;
-                    case R.id.nav_notes:
-                        ft.replace(R.id.fragmentLayout, new NotesListFragment());
-                        break;
-                }
-                ft.commit();
-                currentItem = menuItem.getItemId();
-                return true;
-            }
-        });
+    private void setUpNavigation() {
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        NavigationUI.setupActionBarWithNavController(this, navController, drawerLayout);
+        NavigationUI.setupWithNavController(navigationView, navController);
     }
 }

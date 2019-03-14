@@ -12,4 +12,11 @@
     <string name="phoneNumberLabel">Phone number:</string>
     <string name="emailLabel">Email:</string>
     <string name="addContactFinishButton">Add to contacts</string>
+    <string name="save_contact_failed">Unable to save contact</string>
+    <string name="DeleteText">Delete</string>
+    <string name="updateContactButton">Update</string>
+    <string name="invalidNameError">Please, enter first or last name correctly.</string>
+    <string name="dateOfBirth">Date of birth:</string>
+    <string name="homeAddress">Home address</string>
+    <string name="unableFormatDateText">Unable to format date:</string>
 </resources>

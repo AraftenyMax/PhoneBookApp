@@ -1,4 +1,4 @@
-package com.maxdev.maxphonebook.contacts;
+package com.maxdev.maxphonebook.db.contacts;
 
 
 
@@ -10,6 +10,8 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 import io.reactivex.Completable;
+import io.reactivex.Flowable;
+import io.reactivex.Single;
 
 import static androidx.room.OnConflictStrategy.REPLACE;
 
@@ -17,12 +19,12 @@ import static androidx.room.OnConflictStrategy.REPLACE;
 public interface ContactDAO {
     @Insert(onConflict = REPLACE)
     Completable save(Contact contact);
-    @Query("SELECT * FROM Contacts LIMIT :contactsPage")
-    List<Contact> getPage(int contactsPage);
+    @Query("SELECT * FROM Contacts")
+    Flowable<List<Contact>> getPage();
     @Query("SELECT * FROM Contacts WHERE id = :id")
-    Contact getContact(int id);
+    Single<Contact> getContact(int id);
     @Delete
-    int deleteContact(Contact contact);
+    Completable deleteContact(Contact contact);
     @Update
-    int updateContact(Contact contact);
+    Completable updateContact(Contact contact);
 }

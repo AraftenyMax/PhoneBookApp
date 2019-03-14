@@ -1,11 +1,11 @@
 package com.maxdev.maxphonebook;
 
 import android.app.Application;
-import android.util.Log;
 
 import com.maxdev.maxphonebook.di.DaggerPhoneBookComponent;
 import com.maxdev.maxphonebook.di.PhoneBookComponent;
 import com.maxdev.maxphonebook.di.PhoneBookDatabaseModule;
+
 
 public class App extends Application {
     private static PhoneBookComponent phoneBookComponent;
