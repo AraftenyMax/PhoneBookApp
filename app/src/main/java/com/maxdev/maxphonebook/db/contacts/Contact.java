@@ -4,10 +4,15 @@ package com.maxdev.maxphonebook.db.contacts;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.maxdev.maxphonebook.db.converters.DateConverter;
+
+import java.sql.Timestamp;
 import java.util.Date;
 
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
 
 @Entity(tableName = "Contacts")
 public class Contact implements Parcelable {
@@ -17,19 +22,37 @@ public class Contact implements Parcelable {
     private String lastName;
     private String phone;
     private String email;
-    private Date dateOfBitrh;
+    @TypeConverters({DateConverter.class})
+    private Date dateOfBirth;
     private String homeAddress;
-    private String lastEdit;
+    @TypeConverters({DateConverter.class})
+    private Date lastEdit;
     private boolean isFavorite;
 
     public Contact(String firstName, String lastName, String phone,
-                   String email, String homeAddress, Date dateOfBitrh) {
+                   String email, String homeAddress, Date dateOfBirth) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
         this.email = email;
-        this.dateOfBitrh = dateOfBitrh;
+        this.dateOfBirth = dateOfBirth;
         this.homeAddress = homeAddress;
+    }
+
+    public Date getLastEdit() {
+        return lastEdit;
+    }
+
+    public void setLastEdit(Date lastEdit) {
+        this.lastEdit = lastEdit;
+    }
+
+    public boolean isFavorite() {
+        return isFavorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
     }
 
     protected Contact(Parcel in) {
@@ -69,11 +92,11 @@ public class Contact implements Parcelable {
     };
 
     public Date getDateOfBitrh() {
-        return dateOfBitrh;
+        return dateOfBirth;
     }
 
     public void setDateOfBitrh(Date dateOfBitrh) {
-        this.dateOfBitrh = dateOfBitrh;
+        this.dateOfBirth = dateOfBitrh;
     }
 
     public String getHomeAddress() {
@@ -124,4 +147,11 @@ public class Contact implements Parcelable {
         this.email = email;
     }
 
+    public Date getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
 }

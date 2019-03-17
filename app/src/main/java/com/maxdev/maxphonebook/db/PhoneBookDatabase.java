@@ -1,17 +1,21 @@
-package com.maxdev.maxphonebook.di;
+package com.maxdev.maxphonebook.db;
 
 
 import android.content.Context;
 
+import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconColor;
 import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconDAO;
 import com.maxdev.maxphonebook.db.contacts.Contact;
 import com.maxdev.maxphonebook.db.contacts.ContactDAO;
 
+import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.migration.Migration;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
-@Database(entities = {Contact.class}, version = 1)
+@Database(entities = {Contact.class, ContactIconColor.class}, version = 2)
 public abstract class PhoneBookDatabase extends RoomDatabase {
     public abstract ContactDAO contactDAO();
     public abstract ContactIconDAO contactIconDAO();
@@ -25,6 +29,7 @@ public abstract class PhoneBookDatabase extends RoomDatabase {
     }
 
     private static PhoneBookDatabase create(Context context) {
-        return Room.databaseBuilder(context, PhoneBookDatabase.class, dbName).build();
+        return Room.databaseBuilder(context, PhoneBookDatabase.class, dbName)
+                .fallbackToDestructiveMigration().build();
     }
 }

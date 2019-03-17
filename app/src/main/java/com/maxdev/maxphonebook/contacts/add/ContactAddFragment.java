@@ -1,18 +1,25 @@
 package com.maxdev.maxphonebook.contacts.add;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.maxdev.maxphonebook.R;
+import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconColor;
 import com.maxdev.maxphonebook.db.contacts.Contact;
 import com.maxdev.maxphonebook.db.contacts.ContactsValidator;
 import com.maxdev.maxphonebook.utils.DateFormatter;
+
+import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -29,6 +36,8 @@ public class ContactAddFragment extends Fragment implements ContactsAddPresenter
     EditText emailEdit;
     EditText homeAddressEdit;
     EditText dateOfBirthEdit;
+    TextView contactIconPreviewView;
+    Button addContactButton;
 
     ContactsAddPresenter presenter;
     private View view;
@@ -37,13 +46,19 @@ public class ContactAddFragment extends Fragment implements ContactsAddPresenter
                 @Override
                 public void onFocusChange(View v, boolean hasFocus) {
                     if (!hasFocus) {
-                        String firstName = firstNameEdit.toString();
-                        String lastName = lastNameEdit.toString();
-                        if (ContactsValidator.validateName(firstName, lastName)) {
-                            String chars = String.format("%c%c", firstName.charAt(0), lastName.charAt(0));
-                            presenter
-                        }
+                        String firstName = firstNameEdit.getText().toString();
+                        String lastName = lastNameEdit.getText().toString();
+                        String chars = String.format("%c%c",
+                                firstName.charAt(0), lastName.charAt(0)).toUpperCase();
+                        presenter.selectColor(chars);
                     }
+                }
+            };
+    private View.OnClickListener onAddButtonClickListener =
+            new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onContactSave();
                 }
             };
 
@@ -74,24 +89,35 @@ public class ContactAddFragment extends Fragment implements ContactsAddPresenter
         super.onActivityCreated(savedInstanceState);
     }
 
+    private void locateElements() {
+        firstNameEdit = (EditText) view.findViewById(R.id.firstNameEdit);
+        lastNameEdit = (EditText) view.findViewById(R.id.lastNameEdit);
+        phoneEdit = (EditText) view.findViewById(R.id.phoneNumberEdit);
+        emailEdit = (EditText) view.findViewById(R.id.emailEdit);
+        dateOfBirthEdit = (EditText) view.findViewById(R.id.dateOfBirthEdit);
+        homeAddressEdit = (EditText) view.findViewById(R.id.homeAddressEdit);
+        addContactButton = (Button) view.findViewById(R.id.add_contact_button);
+        contactIconPreviewView = (TextView) view.findViewById(R.id.contactIconPreviewView);
+
+        addContactButton.setOnClickListener(onAddButtonClickListener);
+        lastNameEdit.setOnFocusChangeListener(onLastNameFocusChange);
+        lastNameEdit.setFocusable(true);
+    }
+
+    private Drawable getIconBackground(int color, int radius) {
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setShape(GradientDrawable.RECTANGLE);
+        drawable.setColor(color);
+        drawable.setCornerRadius(radius);
+        return drawable;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_contact_add, container, false);
-        firstNameEdit = (EditText) view.findViewById(R.id.firstNameView);
-        lastNameEdit = (EditText) view.findViewById(R.id.lastNameView);
-        phoneEdit = (EditText) view.findViewById(R.id.phoneNumberView);
-        emailEdit = (EditText) view.findViewById(R.id.emailView);
-        dateOfBirthEdit = (EditText) view.findViewById(R.id.dateOfBirthView);
-        homeAddressEdit = (EditText) view.findViewById(R.id.homeAddressView);
-        Button addContactButton = (Button) view.findViewById(R.id.add_contact_button);
-        addContactButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onContactSave();
-            }
-        });
+        locateElements();
         return view;
     }
 
@@ -103,11 +129,13 @@ public class ContactAddFragment extends Fragment implements ContactsAddPresenter
         String email = emailEdit.getText().toString();
         String homeAddress = homeAddressEdit.toString();
         try {
-            Date dateOfBirth = DateFormatter.fromString(dateOfBirthEdit.toString());
-            Contact contact = new Contact(firstName, lastName, email, phone, homeAddress, dateOfBirth);
+            Date dateOfBirth;
+            if (!dateOfBirthEdit.getText().toString().equals(""))
+                dateOfBirth = DateFormatter.fromString(dateOfBirthEdit.toString());
+            Contact contact = new Contact(firstName, lastName, email, phone, homeAddress, null);
             presenter.saveContact(contact);
         } catch (ParseException ex) {
-            showToast(getString(R.id.invalidDateFormat), Toast.LENGTH_SHORT);
+            Toast.makeText(getContext(), getString(R.string.invalidDateFormat), Toast.LENGTH_SHORT);
         }
     }
 
@@ -118,15 +146,24 @@ public class ContactAddFragment extends Fragment implements ContactsAddPresenter
 
     @Override
     public void onContactValidationFailed() {
-        showToast(getString(R.string.invalidNameError), Toast.LENGTH_SHORT);
+        Toast.makeText(getContext(), getString(R.string.invalidNameError), Toast.LENGTH_SHORT);
     }
 
     @Override
     public void onContactSaveFailed(Throwable throwable) {
-        showToast(getString(R.string.save_contact_failed), Toast.LENGTH_SHORT);
+        Toast.makeText(getContext(), getString(R.string.save_contact_failed), Toast.LENGTH_SHORT);
     }
 
-    public void showToast(String text, int duration) {
-        Toast.makeText(getContext(), text, duration).show();
+    @Override
+    public void displayContactIcon(ContactIconColor color) {
+        contactIconPreviewView.setText(color.getStartChars());
+        Drawable background = getIconBackground(color.getColor(), contactIconPreviewView.getWidth());
+        contactIconPreviewView.setBackground(background);
+    }
+
+    @Override
+    public void clearContactIcon() {
+        contactIconPreviewView.setText("");
+        contactIconPreviewView.setBackground(null);
     }
 }

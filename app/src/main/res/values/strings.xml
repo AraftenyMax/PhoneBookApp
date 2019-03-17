@@ -19,4 +19,5 @@
     <string name="dateOfBirth">Date of birth:</string>
     <string name="homeAddress">Home address</string>
     <string name="unableFormatDateText">Unable to format date:</string>
+    <string name="invalidDateFormat">Invalid date format:</string>
 </resources>

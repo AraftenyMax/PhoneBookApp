@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="dateOfBirthFormat">yyyy-MM-dd</string>
-    <item name="invalidDateFormat" type="id">Invalid date format</item>
-</resources>

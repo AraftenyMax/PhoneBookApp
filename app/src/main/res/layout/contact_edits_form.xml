@@ -15,12 +15,12 @@
             android:id="@+id/frstNameLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="36dp"
             android:text="@string/firstNameLabel"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/contactIconPreviewView" />
 
         <TextView
             android:id="@+id/lastNameLabel"
@@ -56,7 +56,7 @@
             app:layout_constraintTop_toBottomOf="@+id/phoneNumberLabel" />
 
         <EditText
-            android:id="@+id/emailView"
+            android:id="@+id/emailEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -64,10 +64,10 @@
             android:ems="10"
             android:inputType="textEmailAddress"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/phoneNumberView" />
+            app:layout_constraintTop_toBottomOf="@+id/phoneNumberEdit" />
 
         <EditText
-            android:id="@+id/lastNameView"
+            android:id="@+id/lastNameEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
@@ -75,18 +75,18 @@
             android:ems="10"
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/firstNameView" />
+            app:layout_constraintTop_toBottomOf="@+id/firstNameEdit" />
 
         <EditText
-            android:id="@+id/firstNameView"
+            android:id="@+id/firstNameEdit"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_height="45dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="16dp"
             android:ems="10"
             android:inputType="textPersonName"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/contactIconPreviewView" />
 
         <TextView
             android:id="@+id/dateOfBirthLabel"
@@ -100,7 +100,7 @@
             app:layout_constraintTop_toBottomOf="@+id/emailLabel" />
 
         <EditText
-            android:id="@+id/dateOfBirthView"
+            android:id="@+id/dateOfBirthEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="40dp"
@@ -108,10 +108,10 @@
             android:ems="10"
             android:inputType="date"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/emailView" />
+            app:layout_constraintTop_toBottomOf="@+id/emailEdit" />
 
         <EditText
-            android:id="@+id/phoneNumberView"
+            android:id="@+id/phoneNumberEdit"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -119,7 +119,7 @@
             android:ems="10"
             android:inputType="phone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/lastNameView" />
+            app:layout_constraintTop_toBottomOf="@+id/lastNameEdit" />
 
         <TextView
             android:id="@+id/homeAddressLabel"
@@ -135,7 +135,7 @@
             app:layout_constraintTop_toBottomOf="@+id/dateOfBirthLabel" />
 
         <EditText
-            android:id="@+id/homeAddressView"
+            android:id="@+id/homeAddressEdit"
             android:layout_width="310dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
@@ -148,6 +148,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/homeAddressLabel" />
+
+        <TextView
+            android:id="@+id/contactIconPreviewView"
+            style="@style/contactIconPreview"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="8dp"
+            android:text="HH"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

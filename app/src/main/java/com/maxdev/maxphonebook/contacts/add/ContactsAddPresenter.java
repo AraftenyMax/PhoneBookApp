@@ -1,23 +1,34 @@
 package com.maxdev.maxphonebook.contacts.add;
 
+import android.graphics.Color;
+import android.util.Log;
+
 import com.maxdev.maxphonebook.App;
 import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconColor;
 import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconRepository;
 import com.maxdev.maxphonebook.db.contacts.Contact;
 import com.maxdev.maxphonebook.db.contacts.ContactsRepository;
+import com.maxdev.maxphonebook.db.contacts.ContactsValidator;
 
 import java.util.NoSuchElementException;
+import java.util.Random;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class ContactsAddPresenter {
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private static final String TAG = "ContactAddPresenter";
+    private Random random = new Random();
     @Inject
     ContactIconRepository contactIconRepository;
     @Inject
@@ -30,27 +41,52 @@ public class ContactsAddPresenter {
     }
 
     public void saveContact(Contact contact) {
-        contactsRepository.createContact(contact)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this.view::onContactSavedSuccessfully, this.view::onContactSaveFailed);
+        Disposable disposable = Observable.fromCallable(() -> {
+            if (ContactsValidator.validate(contact))
+                Observable.error(new IllegalArgumentException());
+            return contact;
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Contact>() {
+                    @Override
+                    public void accept(Contact contact) throws Exception {
+                        view.onContactSavedSuccessfully();
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        view.onContactSaveFailed(throwable);
+                    }
+                });
+        compositeDisposable.add(disposable);
+        compositeDisposable.clear();
     }
 
-    public int selectColor(String startChars) {
-        Single.fromCallable(() -> contactIconRepository.select(startChars))
-                .doOnSuccess(contactIconColorSingle -> {
-                    ContactIconColor color = contactIconColorSingle.blockingGet();
-                    if (color == null)
-                        Observable.error(new NoSuchElementException(""));
-                    view.displayContactIcon(color);
-                }).doOnError(throwable -> {
-            insertColor(startChars);
-
-        });
+    public void selectColor(String startChars) {
+        if (ContactsValidator.validateNamePart(startChars)) {
+            Single<ContactIconColor> iconColorSingle = contactIconRepository.select(startChars)
+                    .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+            iconColorSingle.subscribe(new Consumer<ContactIconColor>() {
+                @Override
+                public void accept(ContactIconColor iconColor) throws Exception {
+                    view.displayContactIcon(iconColor);
+                }
+            }, new Consumer<Throwable>() {
+                @Override
+                public void accept(Throwable throwable) throws Exception {
+                    ContactIconColor iconColor = generateColor(startChars);
+                    contactIconRepository.insert(iconColor);
+                    view.displayContactIcon(iconColor);
+                }
+            });
+        } else {
+            view.clearContactIcon();
+        }
     }
 
-    private ContactIconColor insertColor(String startChars) {
-        ContactIconColor color =
+    private ContactIconColor generateColor(String startChars) {
+        int color = Color.argb(255,
+                random.nextInt(255), random.nextInt(255), random.nextInt(255));
+        return new ContactIconColor(color, startChars);
     }
 
     public interface View {
@@ -63,5 +99,7 @@ public class ContactsAddPresenter {
         void onContactSaveFailed(Throwable throwable);
 
         void displayContactIcon(ContactIconColor color);
+
+        void clearContactIcon();
     }
 }

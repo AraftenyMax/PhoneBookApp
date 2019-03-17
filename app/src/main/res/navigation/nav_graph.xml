@@ -52,6 +52,6 @@
             app:destination="@id/contactsListFragment" />
         <argument
             android:name="Contact"
-            app:argType="com.maxdev.maxphonebook.contacts.Contact" />
+            app:argType="com.maxdev.maxphonebook.db.contacts.Contact" />
     </fragment>
 </navigation>
