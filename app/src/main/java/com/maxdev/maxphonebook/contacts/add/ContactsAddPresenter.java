@@ -26,7 +26,6 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 public class ContactsAddPresenter {
-    private CompositeDisposable compositeDisposable = new CompositeDisposable();
     private static final String TAG = "ContactAddPresenter";
     private Random random = new Random();
     @Inject
@@ -41,14 +40,15 @@ public class ContactsAddPresenter {
     }
 
     public void saveContact(Contact contact) {
-        Disposable disposable = Observable.fromCallable(() -> {
-            if (ContactsValidator.validate(contact))
+        Observable.fromCallable(() -> {
+            if (!ContactsValidator.validate(contact))
                 Observable.error(new IllegalArgumentException());
             return contact;
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<Contact>() {
                     @Override
                     public void accept(Contact contact) throws Exception {
+                        contactsRepository.createContact(contact);
                         view.onContactSavedSuccessfully();
                     }
                 }, new Consumer<Throwable>() {
@@ -57,15 +57,13 @@ public class ContactsAddPresenter {
                         view.onContactSaveFailed(throwable);
                     }
                 });
-        compositeDisposable.add(disposable);
-        compositeDisposable.clear();
     }
 
     public void selectColor(String startChars) {
         if (ContactsValidator.validateNamePart(startChars)) {
-            Single<ContactIconColor> iconColorSingle = contactIconRepository.select(startChars)
-                    .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
-            iconColorSingle.subscribe(new Consumer<ContactIconColor>() {
+            contactIconRepository.select(startChars)
+                    .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<ContactIconColor>() {
                 @Override
                 public void accept(ContactIconColor iconColor) throws Exception {
                     view.displayContactIcon(iconColor);
@@ -74,8 +72,9 @@ public class ContactsAddPresenter {
                 @Override
                 public void accept(Throwable throwable) throws Exception {
                     ContactIconColor iconColor = generateColor(startChars);
-                    contactIconRepository.insert(iconColor);
-                    view.displayContactIcon(iconColor);
+                    Completable completable = contactIconRepository.insert(iconColor);
+                    completable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(() -> view.displayContactIcon(iconColor), Throwable::printStackTrace);
                 }
             });
         } else {
