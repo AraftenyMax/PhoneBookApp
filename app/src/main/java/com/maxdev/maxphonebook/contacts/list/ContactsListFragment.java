@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 public class ContactsListFragment extends Fragment implements ContactsListPresenter.View {
+    private List<Contact> contacts;
     private ContactsListPresenter presenter;
     private RecyclerView contactsView;
     private ContactsListAdapter adapter;
@@ -30,9 +31,10 @@ public class ContactsListFragment extends Fragment implements ContactsListPresen
         public void onClick(View v) {
             RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) v.getTag();
             int id = viewHolder.getAdapterPosition();
+            Contact selectedConact = contacts.get(id);
             ContactsListFragmentDirections.ContactfromListToDetailed action =
-                    ContactsListFragmentDirections.ContactfromListToDetailed(id);
-            action.setContactId(id);
+                    ContactsListFragmentDirections.ContactfromListToDetailed(selectedConact);
+            action.setContact(selectedConact);
             Navigation.findNavController(v).navigate(action);
         }
     };

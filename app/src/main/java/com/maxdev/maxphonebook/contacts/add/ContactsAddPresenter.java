@@ -1,7 +1,6 @@
 package com.maxdev.maxphonebook.contacts.add;
 
 import android.graphics.Color;
-import android.util.Log;
 
 import com.maxdev.maxphonebook.App;
 import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconColor;
@@ -10,18 +9,12 @@ import com.maxdev.maxphonebook.db.contacts.Contact;
 import com.maxdev.maxphonebook.db.contacts.ContactsRepository;
 import com.maxdev.maxphonebook.db.contacts.ContactsValidator;
 
-import java.util.NoSuchElementException;
 import java.util.Random;
-import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
 import io.reactivex.Completable;
-import io.reactivex.Observable;
-import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -40,23 +33,12 @@ public class ContactsAddPresenter {
     }
 
     public void saveContact(Contact contact) {
-        Observable.fromCallable(() -> {
-            if (!ContactsValidator.validate(contact))
-                Observable.error(new IllegalArgumentException());
-            return contact;
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Contact>() {
-                    @Override
-                    public void accept(Contact contact) throws Exception {
-                        contactsRepository.createContact(contact);
-                        view.onContactSavedSuccessfully();
-                    }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        view.onContactSaveFailed(throwable);
-                    }
-                });
+        if (ContactsValidator.isValid(contact)) {
+            contactsRepository.createContact(contact)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this.view::onContactSavedSuccessfully, this.view::onContactSaveFailed);
+        }
     }
 
     public void selectColor(String startChars) {

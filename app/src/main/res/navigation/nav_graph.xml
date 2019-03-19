@@ -32,16 +32,16 @@
         android:id="@+id/contactDetailedFragment"
         android:name="com.maxdev.maxphonebook.contacts.single.ContactDetailedFragment"
         android:label="fragment_contact_detailed"
-        tools:layout="@layout/fragment_contact_detailed" >
+        tools:layout="@layout/fragment_contact_detailed">
         <action
             android:id="@+id/ContactFromDetailToList"
             app:destination="@id/contactsListFragment" />
-        <argument
-            android:name="ContactId"
-            app:argType="integer" />
         <action
             android:id="@+id/actionContactDetailToEdit"
             app:destination="@id/contactUpdateFragment" />
+        <argument
+            android:name="Contact"
+            app:argType="com.maxdev.maxphonebook.db.contacts.Contact" />
     </fragment>
     <fragment
         android:id="@+id/contactUpdateFragment"

@@ -154,4 +154,12 @@ public class Contact implements Parcelable {
     public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
+
+    public String getFullName() {
+        return String.format("%s %s", firstName, lastName);
+    }
+
+    public String getFirstChars() {
+        return String.format("%c%c", firstName.charAt(0), lastName.charAt(0));
+    }
 }

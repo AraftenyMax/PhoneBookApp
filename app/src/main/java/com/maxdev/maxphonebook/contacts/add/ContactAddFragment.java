@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.maxdev.maxphonebook.R;
+import com.maxdev.maxphonebook.contacticonhelper.ContactIconHelper;
 import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconColor;
 import com.maxdev.maxphonebook.db.contacts.Contact;
 import com.maxdev.maxphonebook.db.contacts.ContactsValidator;
@@ -157,7 +158,8 @@ public class ContactAddFragment extends Fragment implements ContactsAddPresenter
     @Override
     public void displayContactIcon(ContactIconColor color) {
         contactIconPreviewView.setText(color.getStartChars());
-        Drawable background = getIconBackground(color.getColor(), contactIconPreviewView.getWidth());
+        Drawable background = ContactIconHelper.getIconBackground(
+                color.getColor(), contactIconPreviewView.getWidth());
         contactIconPreviewView.setBackground(background);
     }
 

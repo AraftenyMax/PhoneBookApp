@@ -15,13 +15,9 @@ public class ContactsValidator {
         emailPattern = Pattern.compile(emailPatternTemplate);
     }
 
-    public static boolean validate(Contact contact) {
-        return validateName(contact.getFirstName(), contact.getLastName())
+    public static boolean isValid(Contact contact) {
+        return validateNamePart(contact.getFirstName() + " " + contact.getLastName())
                 && validateEmail(contact.getEmail());
-    }
-
-    public static boolean validateName(String firstName, String lastName) {
-        return validateNamePart(firstName) && validateNamePart(lastName);
     }
 
     public static boolean validateNamePart(String part) {

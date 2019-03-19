@@ -15,20 +15,27 @@ import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.maxdev.maxphonebook.R;
+import com.maxdev.maxphonebook.contacticonhelper.ContactIconHelper;
+import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconColor;
 import com.maxdev.maxphonebook.db.contacts.Contact;
+import com.maxdev.maxphonebook.utils.DateFormatter;
+
+import org.w3c.dom.Text;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ContactDetailedFragment extends Fragment implements ContactDetailedPresenter.View {
-    private int contactId;
-    private View view;
     private Contact contact;
+    private View view;
     private ContactDetailedPresenter presenter;
+    private TextView contactIconView;
     private TextView firstName;
     private TextView lastName;
     private TextView phone;
     private TextView email;
+    private TextView dateOfBirth;
+    private TextView homeAddress;
     private Button deleteButton;
     private FloatingActionButton editButton;
 
@@ -63,10 +70,9 @@ public class ContactDetailedFragment extends Fragment implements ContactDetailed
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        contactId = ContactDetailedFragmentArgs.fromBundle(getArguments()).getContactId();
+        contact = ContactDetailedFragmentArgs.fromBundle(getArguments()).getContact();
         view = inflater.inflate(R.layout.fragment_contact_detailed, container, false);
         locateElements();
-        presenter.loadContact(contactId);
         return view;
     }
 
@@ -75,19 +81,31 @@ public class ContactDetailedFragment extends Fragment implements ContactDetailed
         lastName = (TextView)view.findViewById(R.id.lastNameDetailView);
         phone = (TextView)view.findViewById(R.id.phoneDetailView);
         email = (TextView)view.findViewById(R.id.emailDetailView);
+        dateOfBirth = (TextView) view.findViewById(R.id.dateOfBirthView);
+        homeAddress = (TextView) view.findViewById(R.id.homeAddressView);
         deleteButton = (Button)view.findViewById(R.id.deleteContactButton);
+        contactIconView = (TextView)view.findViewById(R.id.contactIconPreviewView);
         deleteButton.setOnClickListener(onDeleteClickListener);
         editButton = (FloatingActionButton)view.findViewById(R.id.editFloatingButton);
         editButton.setOnClickListener(onUpdateClickListener);
     }
 
     @Override
-    public void onContactLoaded(Contact contact) {
+    public void onContactLoaded(Contact contact, ContactIconColor color) {
         this.contact = contact;
         firstName.setText(contact.getFirstName());
         lastName.setText(contact.getLastName());
         phone.setText(contact.getPhone());
         email.setText(contact.getEmail());
+        homeAddress.setText(contact.getHomeAddress());
+        dateOfBirth.setText(DateFormatter.toString(contact.getDateOfBirth()));
+        showIcon(color);
+    }
+
+    private void showIcon(ContactIconColor color) {
+        contactIconView.setText(contact.getFirstChars());
+        contactIconView.setBackground(ContactIconHelper.
+                getIconBackground(color.getColor(), contactIconView.getWidth()));
     }
 
     @Override
