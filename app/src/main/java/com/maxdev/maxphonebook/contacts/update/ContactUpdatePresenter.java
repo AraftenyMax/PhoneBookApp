@@ -40,9 +40,9 @@ public class ContactUpdatePresenter {
         }
     }
 
-    public void updateConactIcon(String startChars) {
+    public void updateContactIcon(String startChars) {
         if (!contact.getFirstChars().equals(startChars) &&
-                ContactsValidator.validateNamePart(startChars)) {
+                ContactsValidator.validateNameInitials(startChars)) {
             contactIconRepository.select(startChars)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

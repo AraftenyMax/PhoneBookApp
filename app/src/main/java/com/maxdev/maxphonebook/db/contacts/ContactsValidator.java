@@ -10,6 +10,7 @@ public class ContactsValidator {
             "^[_A-Za-z0-9-]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
     private final static char[] nameProhibitedChars = "()<>[]{}+-_=\\/\"'.,:;~!@#$%^&*?№".toCharArray();
     private static Pattern emailPattern;
+    public static final int countOfInitialChars = 2;
 
     static {
         emailPattern = Pattern.compile(emailPatternTemplate);
@@ -30,6 +31,10 @@ public class ContactsValidator {
                 return true;
         }
         return false;
+    }
+
+    public static boolean validateNameInitials(String chars) {
+        return validateNamePart(chars) && chars.length() == countOfInitialChars;
     }
 
     public static boolean validateEmail(String email) {

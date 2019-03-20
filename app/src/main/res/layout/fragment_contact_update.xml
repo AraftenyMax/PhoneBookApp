@@ -9,7 +9,7 @@
     <include layout="@layout/contact_edits_form"/>
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/updateContactButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:layout_editor_absoluteX="161dp"
