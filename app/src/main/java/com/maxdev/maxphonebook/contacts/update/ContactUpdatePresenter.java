@@ -6,7 +6,7 @@ import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconColor;
 import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconRepository;
 import com.maxdev.maxphonebook.db.contacts.Contact;
 import com.maxdev.maxphonebook.db.contacts.ContactsRepository;
-import com.maxdev.maxphonebook.db.contacts.ContactsValidator;
+import com.maxdev.maxphonebook.contacts.ContactsValidator;
 
 import javax.inject.Inject;
 

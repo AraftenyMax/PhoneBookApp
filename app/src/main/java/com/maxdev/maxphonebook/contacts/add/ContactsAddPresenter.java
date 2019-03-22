@@ -7,8 +7,9 @@ import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconColor;
 import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconRepository;
 import com.maxdev.maxphonebook.db.contacts.Contact;
 import com.maxdev.maxphonebook.db.contacts.ContactsRepository;
-import com.maxdev.maxphonebook.db.contacts.ContactsValidator;
+import com.maxdev.maxphonebook.contacts.ContactsValidator;
 
+import java.util.Map;
 import java.util.Random;
 
 import javax.inject.Inject;
@@ -38,11 +39,14 @@ public class ContactsAddPresenter {
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this.view::onContactSavedSuccessfully, this.view::onContactSaveFailed);
+        } else {
+            Map<String, String> errors = ContactsValidator.getErrors();
+            view.onContactValidationFailed(errors);
         }
     }
 
     public void selectColor(String startChars) {
-        if (ContactsValidator.validateNamePart(startChars)) {
+        if (ContactsValidator.validateNameInitials(startChars)) {
             contactIconRepository.select(startChars)
                     .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Consumer<ContactIconColor>() {
@@ -75,7 +79,7 @@ public class ContactsAddPresenter {
 
         void onContactSavedSuccessfully();
 
-        void onContactValidationFailed();
+        void onContactValidationFailed(Map<String, String> errors);
 
         void onContactSaveFailed(Throwable throwable);
 

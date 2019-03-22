@@ -5,12 +5,13 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.maxdev.maxphonebook.db.converters.DateConverter;
+import com.maxdev.maxphonebook.utils.DateFormatter;
 
-import java.sql.Timestamp;
+import java.text.ParseException;
 import java.util.Date;
 
-import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.TypeConverters;
 
@@ -29,13 +30,35 @@ public class Contact implements Parcelable {
     private Date lastEdit;
     private boolean isFavorite;
 
-    public Contact(String firstName, String lastName, String phone,
-                   String email, String homeAddress, Date dateOfBirth) {
+    public Contact(int id, String firstName, String lastName, String phone, String email, Date dateOfBirth, String homeAddress) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phone = phone;
         this.email = email;
         this.dateOfBirth = dateOfBirth;
+        this.homeAddress = homeAddress;
+    }
+
+    @Ignore
+    public Contact(String firstName, String lastName, String email,
+                   String phone, String homeAddress, Date dateOfBirth) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phone = phone;
+        this.email = email;
+        setDateOfBirth(dateOfBirth);
+        this.homeAddress = homeAddress;
+    }
+
+    @Ignore
+    public Contact(String firstName, String lastName, String email,
+                   String phone, String dateOfBirth, String homeAddress) throws ParseException{
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phone = phone;
+        this.email = email;
+        setDateOfBirth(dateOfBirth);
         this.homeAddress = homeAddress;
     }
 
@@ -95,8 +118,8 @@ public class Contact implements Parcelable {
         return dateOfBirth;
     }
 
-    public void setDateOfBitrh(Date dateOfBitrh) {
-        this.dateOfBirth = dateOfBitrh;
+    public void setDateOfBirth(long dateOfBitrh) {
+        this.dateOfBirth = DateConverter.fromTimestamp(dateOfBitrh);
     }
 
     public String getHomeAddress() {
@@ -153,6 +176,11 @@ public class Contact implements Parcelable {
 
     public void setDateOfBirth(Date dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) throws ParseException {
+        if (!dateOfBirth.equals(""))
+            this.dateOfBirth = DateFormatter.fromString(dateOfBirth);
     }
 
     public String getFullName() {

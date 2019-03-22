@@ -63,7 +63,6 @@ public class ContactDetailedFragment extends Fragment implements ContactDetailed
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new ContactDetailedPresenter(this);
     }
 
     @Override
@@ -71,6 +70,7 @@ public class ContactDetailedFragment extends Fragment implements ContactDetailed
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         contact = ContactDetailedFragmentArgs.fromBundle(getArguments()).getContact();
+        presenter = new ContactDetailedPresenter(this, contact);
         view = inflater.inflate(R.layout.fragment_contact_detailed, container, false);
         locateElements();
         return view;

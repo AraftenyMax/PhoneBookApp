@@ -9,13 +9,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.maxdev.maxphonebook.R;
 import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconColor;
 import com.maxdev.maxphonebook.db.contacts.Contact;
 import com.maxdev.maxphonebook.utils.DateFormatter;
+
+import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -33,6 +37,9 @@ public class ContactUpdateFragment extends Fragment implements ContactUpdatePres
     private EditText homeAddressEdit;
     private EditText dateOfBirthEdit;
     private Button updateContact;
+    private TextInputLayout firstNameInputLayout;
+    private TextInputLayout lastNameInputLayout;
+    private TextInputLayout emailInputLayout;
     private ContactUpdatePresenter presenter;
 
     private View.OnClickListener onUpdateClickListener = new View.OnClickListener() {
@@ -89,24 +96,21 @@ public class ContactUpdateFragment extends Fragment implements ContactUpdatePres
         homeAddressEdit = (EditText) view.findViewById(R.id.homeAddressEdit);
         dateOfBirthEdit = (EditText) view.findViewById(R.id.dateOfBirthEdit);
         updateContact = (Button) view.findViewById(R.id.updateContactButton);
+        firstNameInputLayout = (TextInputLayout) view.findViewById(R.id.firstNameInputLayout);
+        lastNameInputLayout = (TextInputLayout) view.findViewById(R.id.lastNameInputLayout);
+        emailInputLayout = (TextInputLayout) view.findViewById(R.id.emailInputLayout);
         updateContact.setOnClickListener(onUpdateClickListener);
         firstNameEdit.setOnFocusChangeListener(onNameEditsFocusListener);
         lastNameEdit.setOnFocusChangeListener(onNameEditsFocusListener);
     }
 
     private Contact collectContact() throws IllegalArgumentException {
-        Date dateOfBirth;
         String firstName = firstNameEdit.getText().toString();
         String lastName = lastNameEdit.getText().toString();
         String email = emailEdit.getText().toString();
         String phone = phoneEdit.getText().toString();
         String homeAddress = homeAddressEdit.getText().toString();
-        try {
-            dateOfBirth = DateFormatter.fromString(dateOfBirthEdit.getText().toString());
-        } catch (ParseException ex) {
-            Toast.makeText(getContext(), getString(R.string.invalidDateFormat), Toast.LENGTH_SHORT).show();
-            throw new IllegalArgumentException(getString(R.string.invalidDateFormat));
-        }
+        Date dateOfBirth = null;
         return new Contact(firstName, lastName, phone, email, homeAddress, dateOfBirth);
     }
 
@@ -117,7 +121,7 @@ public class ContactUpdateFragment extends Fragment implements ContactUpdatePres
 
     @Override
     public void onContactUpdateFail(Throwable throwable) {
-
+        Toast.makeText(getContext(), getString(R.string.unableToUpdateContact), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -132,6 +136,6 @@ public class ContactUpdateFragment extends Fragment implements ContactUpdatePres
 
     @Override
     public void updateIconFail(Throwable throwable) {
-
+        Toast.makeText(getContext(), getString(R.string.unableToUpdateContactIcon), Toast.LENGTH_SHORT).show();
     }
 }

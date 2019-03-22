@@ -1,9 +1,7 @@
 package com.maxdev.maxphonebook.contacts.add;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,21 +11,22 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.maxdev.maxphonebook.R;
 import com.maxdev.maxphonebook.contacticonhelper.ContactIconHelper;
 import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconColor;
 import com.maxdev.maxphonebook.db.contacts.Contact;
-import com.maxdev.maxphonebook.db.contacts.ContactsValidator;
+import com.maxdev.maxphonebook.contacts.ContactsValidator;
 import com.maxdev.maxphonebook.utils.DateFormatter;
-
-import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Map;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
+import androidx.room.Index;
 
 
 public class ContactAddFragment extends Fragment implements ContactsAddPresenter.View {
@@ -36,6 +35,9 @@ public class ContactAddFragment extends Fragment implements ContactsAddPresenter
     EditText phoneEdit;
     EditText emailEdit;
     EditText homeAddressEdit;
+    TextInputLayout firstNameInputLayout;
+    TextInputLayout lastNameInputLayout;
+    TextInputLayout emailInputLayout;
     EditText dateOfBirthEdit;
     TextView contactIconPreviewView;
     Button addContactButton;
@@ -49,9 +51,13 @@ public class ContactAddFragment extends Fragment implements ContactsAddPresenter
                     if (!hasFocus) {
                         String firstName = firstNameEdit.getText().toString();
                         String lastName = lastNameEdit.getText().toString();
-                        String chars = String.format("%c%c",
-                                firstName.charAt(0), lastName.charAt(0)).toUpperCase();
-                        presenter.selectColor(chars);
+                        try {
+                            String chars = String.format("%c%c",
+                                    firstName.charAt(0), lastName.charAt(0)).toUpperCase();
+                            presenter.selectColor(chars);
+                        } catch (IndexOutOfBoundsException ex) {
+                            clearContactIcon();
+                        }
                     }
                 }
             };
@@ -100,17 +106,13 @@ public class ContactAddFragment extends Fragment implements ContactsAddPresenter
         addContactButton = (Button) view.findViewById(R.id.add_contact_button);
         contactIconPreviewView = (TextView) view.findViewById(R.id.contactIconPreviewView);
 
+        firstNameInputLayout = (TextInputLayout) view.findViewById(R.id.firstNameInputLayout);
+        lastNameInputLayout = (TextInputLayout) view.findViewById(R.id.lastNameInputLayout);
+        emailInputLayout = (TextInputLayout) view.findViewById(R.id.emailInputLayout);
+
         addContactButton.setOnClickListener(onAddButtonClickListener);
         lastNameEdit.setOnFocusChangeListener(onLastNameFocusChange);
         lastNameEdit.setFocusable(true);
-    }
-
-    private Drawable getIconBackground(int color, int radius) {
-        GradientDrawable drawable = new GradientDrawable();
-        drawable.setShape(GradientDrawable.RECTANGLE);
-        drawable.setColor(color);
-        drawable.setCornerRadius(radius);
-        return drawable;
     }
 
     @Override
@@ -128,15 +130,13 @@ public class ContactAddFragment extends Fragment implements ContactsAddPresenter
         String lastName = lastNameEdit.getText().toString();
         String phone = phoneEdit.getText().toString();
         String email = emailEdit.getText().toString();
-        String homeAddress = homeAddressEdit.toString();
+        String homeAddress = homeAddressEdit.getText().toString();
+        String dateOfBirth = dateOfBirthEdit.getText().toString();
         try {
-            Date dateOfBirth;
-            if (!dateOfBirthEdit.getText().toString().equals(""))
-                dateOfBirth = DateFormatter.fromString(dateOfBirthEdit.toString());
-            Contact contact = new Contact(firstName, lastName, email, phone, homeAddress, null);
+            Contact contact = new Contact(firstName, lastName, email, phone, dateOfBirth, homeAddress);
             presenter.saveContact(contact);
         } catch (ParseException ex) {
-            Toast.makeText(getContext(), getString(R.string.invalidDateFormat), Toast.LENGTH_SHORT);
+            Toast.makeText(getContext(), getString(R.string.invalidDateFormat), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -146,8 +146,16 @@ public class ContactAddFragment extends Fragment implements ContactsAddPresenter
     }
 
     @Override
-    public void onContactValidationFailed() {
-        Toast.makeText(getContext(), getString(R.string.invalidNameError), Toast.LENGTH_SHORT);
+    public void onContactValidationFailed(Map<String, String> errors) {
+        if (errors.containsKey(ContactsValidator.firstNameField)) {
+            firstNameInputLayout.setError(errors.get(ContactsValidator.firstNameField));
+        }
+        if (errors.containsKey(ContactsValidator.lastNameField)) {
+            lastNameInputLayout.setError(errors.get(ContactsValidator.lastNameField));
+        }
+        if (errors.containsKey(ContactsValidator.emailField)) {
+            emailInputLayout.setError(errors.get(ContactsValidator.emailField));
+        }
     }
 
     @Override

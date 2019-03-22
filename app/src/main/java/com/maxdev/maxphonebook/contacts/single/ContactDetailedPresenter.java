@@ -19,16 +19,10 @@ public class ContactDetailedPresenter {
     @Inject
     ContactsRepository contactsRepository;
 
-    public ContactDetailedPresenter(View view) {
+
+    public ContactDetailedPresenter(View view, Contact contact) {
         App.getPhoneBookComponent().inject(this);
         this.view = view;
-    }
-
-    public void loadContact(int id) {
-        contactsRepository.getContact(id)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::loadIcon, Throwable::printStackTrace);
     }
 
     public void deleteContact(Contact contact) {
