@@ -30,7 +30,7 @@
     </fragment>
     <fragment
         android:id="@+id/contactDetailedFragment"
-        android:name="com.maxdev.maxphonebook.contacts.single.ContactDetailedFragment"
+        android:name="com.maxdev.maxphonebook.contacts.detailed.ContactDetailedFragment"
         android:label="fragment_contact_detailed"
         tools:layout="@layout/fragment_contact_detailed">
         <action

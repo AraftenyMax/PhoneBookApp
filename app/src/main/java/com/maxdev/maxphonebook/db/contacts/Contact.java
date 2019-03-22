@@ -188,6 +188,6 @@ public class Contact implements Parcelable {
     }
 
     public String getFirstChars() {
-        return String.format("%c%c", firstName.charAt(0), lastName.charAt(0));
+        return String.format("%c%c", firstName.charAt(0), lastName.charAt(0)).toUpperCase();
     }
 }

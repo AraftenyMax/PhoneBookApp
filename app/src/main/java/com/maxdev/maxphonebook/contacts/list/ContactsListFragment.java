@@ -31,10 +31,10 @@ public class ContactsListFragment extends Fragment implements ContactsListPresen
         public void onClick(View v) {
             RecyclerView.ViewHolder viewHolder = (RecyclerView.ViewHolder) v.getTag();
             int id = viewHolder.getAdapterPosition();
-            Contact selectedConact = contacts.get(id);
+            Contact selectedContact = contacts.get(id);
             ContactsListFragmentDirections.ContactfromListToDetailed action =
-                    ContactsListFragmentDirections.ContactfromListToDetailed(selectedConact);
-            action.setContact(selectedConact);
+                    ContactsListFragmentDirections.ContactfromListToDetailed(selectedContact);
+            action.setContact(selectedContact);
             Navigation.findNavController(v).navigate(action);
         }
     };
@@ -74,7 +74,8 @@ public class ContactsListFragment extends Fragment implements ContactsListPresen
         return view;
     }
 
-    private void setUpRecycleView(List<Contact> contactsList){
+    private void setUpRecycleView(List<Contact> contactsList) {
+        this.contacts = contactsList;
         adapter = new ContactsListAdapter(contactsList);
         adapter.setOnItemClickListener(onItemClickListener);
         RecyclerView.LayoutManager layoutManager =

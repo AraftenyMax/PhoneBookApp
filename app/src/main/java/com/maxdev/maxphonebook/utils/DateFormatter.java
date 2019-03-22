@@ -11,7 +11,7 @@ import java.util.Date;
 
 public class DateFormatter {
     private final static String tag = "DateFormatter";
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
     public static Date fromString(String s) throws ParseException {
         try {
             return dateFormat.parse(s);

@@ -2,7 +2,7 @@ package com.maxdev.maxphonebook.di;
 
 import com.maxdev.maxphonebook.contacts.add.ContactsAddPresenter;
 import com.maxdev.maxphonebook.contacts.list.ContactsListPresenter;
-import com.maxdev.maxphonebook.contacts.single.ContactDetailedPresenter;
+import com.maxdev.maxphonebook.contacts.detailed.ContactDetailedPresenter;
 import com.maxdev.maxphonebook.contacts.update.ContactUpdatePresenter;
 
 import javax.inject.Singleton;

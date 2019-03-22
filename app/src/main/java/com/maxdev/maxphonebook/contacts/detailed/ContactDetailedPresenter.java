@@ -1,4 +1,4 @@
-package com.maxdev.maxphonebook.contacts.single;
+package com.maxdev.maxphonebook.contacts.detailed;
 
 
 import com.maxdev.maxphonebook.App;
@@ -14,6 +14,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class ContactDetailedPresenter {
     private View view;
+    private Contact contact;
     @Inject
     ContactIconRepository contactIconRepository;
     @Inject
@@ -23,9 +24,11 @@ public class ContactDetailedPresenter {
     public ContactDetailedPresenter(View view, Contact contact) {
         App.getPhoneBookComponent().inject(this);
         this.view = view;
+        this.contact = contact;
+        loadIcon(contact);
     }
 
-    public void deleteContact(Contact contact) {
+    public void deleteContact() {
         contactsRepository.deleteContact(contact)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

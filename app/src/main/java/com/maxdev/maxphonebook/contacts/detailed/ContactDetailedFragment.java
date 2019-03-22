@@ -1,4 +1,4 @@
-package com.maxdev.maxphonebook.contacts.single;
+package com.maxdev.maxphonebook.contacts.detailed;
 
 
 import android.os.Bundle;
@@ -20,7 +20,7 @@ import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconColor;
 import com.maxdev.maxphonebook.db.contacts.Contact;
 import com.maxdev.maxphonebook.utils.DateFormatter;
 
-import org.w3c.dom.Text;
+import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -34,7 +34,7 @@ public class ContactDetailedFragment extends Fragment implements ContactDetailed
     private TextView lastName;
     private TextView phone;
     private TextView email;
-    private TextView dateOfBirth;
+    private TextView dateOfBirthView;
     private TextView homeAddress;
     private Button deleteButton;
     private FloatingActionButton editButton;
@@ -42,7 +42,7 @@ public class ContactDetailedFragment extends Fragment implements ContactDetailed
     private View.OnClickListener onDeleteClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            presenter.deleteContact(contact);
+            presenter.deleteContact();
         }
     };
 
@@ -70,9 +70,9 @@ public class ContactDetailedFragment extends Fragment implements ContactDetailed
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         contact = ContactDetailedFragmentArgs.fromBundle(getArguments()).getContact();
-        presenter = new ContactDetailedPresenter(this, contact);
         view = inflater.inflate(R.layout.fragment_contact_detailed, container, false);
         locateElements();
+        presenter = new ContactDetailedPresenter(this, contact);
         return view;
     }
 
@@ -81,7 +81,7 @@ public class ContactDetailedFragment extends Fragment implements ContactDetailed
         lastName = (TextView)view.findViewById(R.id.lastNameDetailView);
         phone = (TextView)view.findViewById(R.id.phoneDetailView);
         email = (TextView)view.findViewById(R.id.emailDetailView);
-        dateOfBirth = (TextView) view.findViewById(R.id.dateOfBirthView);
+        dateOfBirthView = (TextView) view.findViewById(R.id.dateOfBirthView);
         homeAddress = (TextView) view.findViewById(R.id.homeAddressView);
         deleteButton = (Button)view.findViewById(R.id.deleteContactButton);
         contactIconView = (TextView)view.findViewById(R.id.contactIconPreviewView);
@@ -98,7 +98,9 @@ public class ContactDetailedFragment extends Fragment implements ContactDetailed
         phone.setText(contact.getPhone());
         email.setText(contact.getEmail());
         homeAddress.setText(contact.getHomeAddress());
-        dateOfBirth.setText(DateFormatter.toString(contact.getDateOfBirth()));
+        Date dateOfBirth = contact.getDateOfBirth();
+        if (dateOfBirth != null)
+            dateOfBirthView.setText(DateFormatter.toString(contact.getDateOfBirth()));
         showIcon(color);
     }
 
