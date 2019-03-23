@@ -52,7 +52,7 @@ public class ContactsAddPresenter {
                     .subscribe(new Consumer<ContactIconColor>() {
                 @Override
                 public void accept(ContactIconColor iconColor) throws Exception {
-                    view.displayContactIcon(iconColor);
+                    view.onDisplayContactIcon(iconColor);
                 }
             }, new Consumer<Throwable>() {
                 @Override
@@ -60,11 +60,11 @@ public class ContactsAddPresenter {
                     ContactIconColor iconColor = generateColor(startChars);
                     Completable completable = contactIconRepository.insert(iconColor);
                     completable.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(() -> view.displayContactIcon(iconColor), Throwable::printStackTrace);
+                            .subscribe(() -> view.onDisplayContactIcon(iconColor), Throwable::printStackTrace);
                 }
             });
         } else {
-            view.clearContactIcon();
+            view.onClearContactIcon();
         }
     }
 
@@ -83,8 +83,8 @@ public class ContactsAddPresenter {
 
         void onContactSaveFailed(Throwable throwable);
 
-        void displayContactIcon(ContactIconColor color);
+        void onDisplayContactIcon(ContactIconColor color);
 
-        void clearContactIcon();
+        void onClearContactIcon();
     }
 }

@@ -8,6 +8,8 @@ import com.maxdev.maxphonebook.db.contacts.Contact;
 import com.maxdev.maxphonebook.db.contacts.ContactsRepository;
 import com.maxdev.maxphonebook.contacts.ContactsValidator;
 
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -36,7 +38,7 @@ public class ContactUpdatePresenter {
                     .subscribe(this.view::onContactUpdatedSuccessfully,
                             this.view::onContactUpdateFail);
         } else {
-            view.onContactValidationFailed();
+            view.onContactValidationFailed(ContactsValidator.getErrors());
         }
     }
 
@@ -49,7 +51,7 @@ public class ContactUpdatePresenter {
                     .subscribe(new Consumer<ContactIconColor>() {
                         @Override
                         public void accept(ContactIconColor color) throws Exception {
-                            view.updateIconSuccess(color);
+                            view.onUpdateIconSuccess(color);
                         }
                     }, new Consumer<Throwable>() {
                         @Override
@@ -59,12 +61,14 @@ public class ContactUpdatePresenter {
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())
                                     .subscribe(() -> {
-                                        view.updateIconSuccess(iconColor);
+                                        view.onUpdateIconSuccess(iconColor);
                                     }, throwable1 -> {
-                                        view.updateIconFail(throwable1);
+                                        view.onUpdateIconFail(throwable1);
                                     });
                         }
                     });
+        } else {
+            view.onContactIconClear();
         }
     }
 
@@ -73,10 +77,12 @@ public class ContactUpdatePresenter {
 
         void onContactUpdateFail(Throwable throwable);
 
-        void onContactValidationFailed();
+        void onContactValidationFailed(Map<String, String> errors);
 
-        void updateIconSuccess(ContactIconColor color);
+        void onUpdateIconSuccess(ContactIconColor color);
 
-        void updateIconFail(Throwable throwable);
+        void onUpdateIconFail(Throwable throwable);
+
+        void onContactIconClear();
     }
 }
