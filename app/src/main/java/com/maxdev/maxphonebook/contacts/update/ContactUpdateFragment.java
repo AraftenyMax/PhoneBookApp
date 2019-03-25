@@ -7,14 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.google.android.material.textfield.TextInputLayout;
 import com.maxdev.maxphonebook.R;
 import com.maxdev.maxphonebook.contacts.ContactEditBaseFragment;
 import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconColor;
 import com.maxdev.maxphonebook.db.contacts.Contact;
+import com.maxdev.maxphonebook.utils.DateFormatter;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -25,8 +24,8 @@ import androidx.navigation.Navigation;
 public class ContactUpdateFragment extends ContactEditBaseFragment implements ContactUpdatePresenter.View{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    private Contact contact;
     private static final String TAG = "ContactUpdateFragment";
-    private View view;
     private Button onUpdateContactButton;
     private ContactUpdatePresenter presenter;
 
@@ -34,7 +33,7 @@ public class ContactUpdateFragment extends ContactEditBaseFragment implements Co
         @Override
         public void onClick(View v) {
             try {
-                Contact contact = getContact();
+                collectEditedContact(contact);
                 presenter.updateContact(contact);
             } catch (IllegalArgumentException ex) {
                 Log.e(TAG, ex.getMessage());
@@ -46,12 +45,28 @@ public class ContactUpdateFragment extends ContactEditBaseFragment implements Co
         }
     };
 
+    private void collectEditedContact(Contact contact) throws ParseException{
+        contact.setFirstName(firstNameEdit.getText().toString());
+        contact.setLastName(lastNameEdit.getText().toString());
+        contact.setEmail(emailEdit.getText().toString());
+        contact.setPhone(phoneEdit.getText().toString());
+        contact.setHomeAddress(homeAddressEdit.getText().toString());
+        Date dateOfBirth = DateFormatter.fromString(dateOfBirthEdit.getText().toString());
+        if (dateOfBirth != null)
+            contact.setDateOfBirth(dateOfBirth);
+    }
+
     private View.OnFocusChangeListener onNameEditsFocusListener = new View.OnFocusChangeListener() {
         @Override
         public void onFocusChange(View v, boolean hasFocus) {
             if(!hasFocus) {
-                String nameInitials = getNameInitials();
-                presenter.updateContactIcon(nameInitials);
+                try {
+                    String nameInitials = getNameInitials();
+                    presenter.updateContactIcon(nameInitials);
+                } catch (IndexOutOfBoundsException ex) {
+                    Log.e(TAG, ex.getMessage());
+                    clearContactIcon();
+                }
             }
         }
     };
@@ -66,21 +81,24 @@ public class ContactUpdateFragment extends ContactEditBaseFragment implements Co
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        presenter = new ContactUpdatePresenter(this);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        this.contact = ContactUpdateFragmentArgs.fromBundle(getArguments()).getContact();
+        presenter = new ContactUpdatePresenter(this, contact);
         view = inflater.inflate(R.layout.fragment_contact_update, container, false);
         locateElements();
+        showContact(contact);
         return view;
     }
+
     @Override
     protected void locateElements() {
         super.locateElements();
-        onUpdateContactButton = (Button) view.findViewById(R.id.updateContactButton);
+        onUpdateContactButton = (Button) view.findViewById(R.id.updateContactFormButton);
         onUpdateContactButton.setOnClickListener(onUpdateClickListener);
         firstNameEdit.setOnFocusChangeListener(onNameEditsFocusListener);
         lastNameEdit.setOnFocusChangeListener(onNameEditsFocusListener);
@@ -114,5 +132,17 @@ public class ContactUpdateFragment extends ContactEditBaseFragment implements Co
     @Override
     public void onContactIconClear() {
         clearContactIcon();
+    }
+
+    private void showContact(Contact contact) {
+        firstNameEdit.setText(contact.getFirstName());
+        lastNameEdit.setText(contact.getLastName());
+        emailEdit.setText(contact.getEmail());
+        phoneEdit.setText(contact.getPhone());
+        homeAddressEdit.setText(contact.getHomeAddress());
+        Date dateOfBirth = contact.getDateOfBirth();
+        if (dateOfBirth != null)
+            dateOfBirthEdit.setText(DateFormatter.toString(dateOfBirth));
+        presenter.updateContactIcon(contact.getFirstChars());
     }
 }

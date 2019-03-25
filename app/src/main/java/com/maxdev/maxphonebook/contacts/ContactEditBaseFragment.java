@@ -42,17 +42,6 @@ public class ContactEditBaseFragment extends Fragment {
         return chars.toUpperCase();
     }
 
-    protected Contact getContact() throws ParseException {
-        String firstName = firstNameEdit.getText().toString();
-        String lastName = lastNameEdit.getText().toString();
-        String phone = phoneEdit.getText().toString();
-        String email = emailEdit.getText().toString();
-        String homeAddress = homeAddressEdit.getText().toString();
-        String dateOfBirth = dateOfBirthEdit.getText().toString();
-        Contact contact = new Contact(firstName, lastName, email, phone, dateOfBirth, homeAddress);
-        return contact;
-    }
-
     protected void contactValidationFailed(Map<String, String> errors) {
         if (errors.containsKey(ContactsValidator.firstNameField)) {
             firstNameInputLayout.setError(errors.get(ContactsValidator.firstNameField));

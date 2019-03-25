@@ -17,7 +17,6 @@ import com.maxdev.maxphonebook.db.contacts.Contact;
 import java.text.ParseException;
 import java.util.Map;
 
-import androidx.annotation.Nullable;
 import androidx.navigation.Navigation;
 
 
@@ -92,7 +91,7 @@ public class ContactAddFragment extends ContactEditBaseFragment implements Conta
     @Override
     public void onContactSave() {
         try {
-            Contact contact = getContact();
+            Contact contact = collectContact();
             presenter.saveContact(contact);
         } catch (ParseException ex) {
             Log.e(TAG, ex.getMessage());
@@ -124,5 +123,16 @@ public class ContactAddFragment extends ContactEditBaseFragment implements Conta
     @Override
     public void onClearContactIcon() {
         clearContactIcon();
+    }
+
+    private Contact collectContact() throws ParseException {
+        String firstName = firstNameEdit.getText().toString();
+        String lastName = lastNameEdit.getText().toString();
+        String phone = phoneEdit.getText().toString();
+        String email = emailEdit.getText().toString();
+        String homeAddress = homeAddressEdit.getText().toString();
+        String dateOfBirth = dateOfBirthEdit.getText().toString();
+        Contact contact = new Contact(firstName, lastName, email, phone, dateOfBirth, homeAddress);
+        return contact;
     }
 }

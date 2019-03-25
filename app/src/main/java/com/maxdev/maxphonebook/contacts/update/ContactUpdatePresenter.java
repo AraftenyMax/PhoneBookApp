@@ -24,9 +24,10 @@ public class ContactUpdatePresenter {
     @Inject
     ContactIconRepository contactIconRepository;
 
-    public ContactUpdatePresenter(View view) {
+    public ContactUpdatePresenter(View view, Contact contact) {
         App.getPhoneBookComponent().inject(this);
         this.view = view;
+        this.contact = contact;
     }
 
     public void updateContact(Contact contact) {
@@ -43,8 +44,7 @@ public class ContactUpdatePresenter {
     }
 
     public void updateContactIcon(String startChars) {
-        if (!contact.getFirstChars().equals(startChars) &&
-                ContactsValidator.validateNameInitials(startChars)) {
+        if (ContactsValidator.validateNameInitials(startChars)) {
             contactIconRepository.select(startChars)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
