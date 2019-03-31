@@ -24,4 +24,5 @@
     <string name="containsProhibitedChars">%s contains prohibited characters.</string>
     <string name="invalidEmail">Invalid email format.</string>
     <string name="emptyStringIsNotAllowed">Empty %s is not allowed.</string>
+    <string name="contactGroupLabel">Group:</string>
 </resources>

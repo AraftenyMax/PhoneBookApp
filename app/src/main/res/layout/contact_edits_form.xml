@@ -129,7 +129,7 @@
                 style="@style/detailTextViewStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="44dp"
                 android:text="@string/dateOfBirth"
                 app:layout_constraintStart_toStartOf="parent"
@@ -141,7 +141,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="96dp"
                 android:layout_marginEnd="8dp"
                 android:text="@string/homeAddress"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -154,7 +154,7 @@
                 android:layout_width="310dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
                 android:ems="10"
                 android:inputType="textPersonName"
@@ -190,12 +190,41 @@
                 android:id="@+id/dateOfBirthEdit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
                 android:layout_marginEnd="24dp"
                 android:ems="10"
                 android:inputType="date"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/emailInputLayout" />
+
+            <TextView
+                android:id="@+id/contactGroupEmail"
+                style="@style/detailTextViewStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:text="@string/contactGroupLabel"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dateOfBirthLabel" />
+
+            <Spinner
+                android:id="@+id/groupSpinner"
+                android:layout_width="183dp"
+                android:layout_height="36dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/addGroupDetailedButton"
+                app:layout_constraintTop_toBottomOf="@+id/dateOfBirthEdit" />
+
+            <ImageButton
+                android:id="@+id/addGroupDetailedButton"
+                android:layout_width="36dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/dateOfBirthEdit"
+                app:srcCompat="@android:drawable/ic_input_add" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </LinearLayout>

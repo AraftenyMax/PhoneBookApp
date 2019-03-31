@@ -3,6 +3,7 @@ package com.maxdev.maxphonebook.di;
 import android.content.Context;
 
 import com.maxdev.maxphonebook.db.PhoneBookDatabase;
+import com.maxdev.maxphonebook.db.contactgroup.ContactGroupsRepository;
 import com.maxdev.maxphonebook.db.contacticoncolors.ContactIconRepository;
 import com.maxdev.maxphonebook.db.contacts.ContactsRepository;
 
@@ -29,5 +30,9 @@ public class PhoneBookDatabaseModule {
 
     @Provides static ContactIconRepository provideContactIconColorRepository() {
         return new ContactIconRepository(database.contactIconDAO());
+    }
+
+    @Provides static ContactGroupsRepository provideContactGroupsRepository() {
+        return new ContactGroupsRepository(database.contactGroupDAO());
     }
 }

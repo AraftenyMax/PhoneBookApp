@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +36,8 @@ public class ContactEditBaseFragment extends Fragment {
     protected TextInputLayout emailInputLayout;
     protected EditText dateOfBirthEdit;
     protected TextView contactIconPreviewView;
+    protected Spinner groupSpinner;
+    protected ImageButton addGroupButton;
 
     protected String getNameInitials() throws IndexOutOfBoundsException {
         String firstName = firstNameEdit.getText().toString();
@@ -74,6 +78,8 @@ public class ContactEditBaseFragment extends Fragment {
         dateOfBirthEdit = (EditText) view.findViewById(R.id.dateOfBirthEdit);
         homeAddressEdit = (EditText) view.findViewById(R.id.homeAddressEdit);
         contactIconPreviewView = (TextView) view.findViewById(R.id.contactIconPreviewView);
+        groupSpinner = (Spinner) view.findViewById(R.id.groupSpinner);
+        addGroupButton = (ImageButton) view.findViewById(R.id.addGroupDetailedButton);
 
         firstNameInputLayout = (TextInputLayout) view.findViewById(R.id.firstNameInputLayout);
         lastNameInputLayout = (TextInputLayout) view.findViewById(R.id.lastNameInputLayout);
